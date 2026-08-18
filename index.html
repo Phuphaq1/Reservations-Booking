@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ในสวน เขาใหญ่ | ระบบจองที่พัก</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F6FA; --surface:#FFFFFF; --ink:#14151F; --ink-soft:#6B7080;
+    --primary:#4F46E5; --primary-dark:#4338CA; --primary-wash:#EEEDFC;
+    --accent:#0EA989; --accent-wash:#E3F7F1;
+    --warn:#F59E0B; --warn-wash:#FEF3DE;
+    --danger:#EF4444; --danger-wash:#FDEAEA;
+    --line:#E7E8F0;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ background:var(--bg); color:var(--ink); font-family:'Plus Jakarta Sans',sans-serif; line-height:1.55; -webkit-font-smoothing:antialiased; }
+  .mono{ font-family:'JetBrains Mono',monospace; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; border:none; }
+  img{ max-width:100%; display:block; }
+  input, textarea{ font-family:inherit; }
+
+  header{ position:sticky; top:0; z-index:40; background:rgba(245,246,250,0.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:12px 20px; gap:12px; }
+  .brand{ display:flex; align-items:center; gap:9px; }
+  .brand-mark{ width:34px; height:34px; border-radius:10px; background:var(--primary); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:15px; flex-shrink:0; }
+  .brand-text .name{ font-weight:800; font-size:15px; line-height:1.1; }
+  .brand-text .sub{ font-size:10px; color:var(--ink-soft); letter-spacing:0.05em; }
+  .role-switch{ display:flex; background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:3px; gap:2px; }
+  .role-switch button{ padding:7px 13px; border-radius:999px; font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+  .role-switch button.active{ background:var(--ink); color:#fff; }
+  .header-actions{ display:flex; align-items:center; gap:8px; }
+  .icon-btn{ position:relative; width:38px; height:38px; border-radius:10px; background:var(--surface); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; color:var(--ink); }
+  .icon-btn svg{ width:18px; height:18px; }
+  .icon-btn .badge{ position:absolute; top:-5px; right:-5px; background:var(--danger); color:#fff; width:17px; height:17px; border-radius:50%; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:700; }
+  .line-btn{ display:flex; align-items:center; gap:6px; background:#06C755; color:#fff; padding:9px 14px; border-radius:10px; font-size:12.5px; font-weight:700; }
+  .dropdown{ position:absolute; top:52px; right:20px; width:320px; max-height:400px; overflow-y:auto; background:var(--surface); border:1px solid var(--line); border-radius:14px; box-shadow:0 20px 40px -16px rgba(20,21,31,0.25); z-index:50; display:none; padding:8px; }
+  .dropdown.open{ display:block; }
+  .dropdown-title{ font-size:12px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.05em; padding:8px 8px 4px; }
+  .notif-item{ display:flex; gap:10px; padding:10px 8px; border-radius:10px; }
+  .notif-item:hover{ background:var(--bg); }
+  .notif-item .dot{ width:8px; height:8px; border-radius:50%; background:var(--primary); margin-top:6px; flex-shrink:0; }
+  .notif-item.read .dot{ background:var(--line); }
+  .notif-item h5{ font-size:13px; font-weight:700; }
+  .notif-item p{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .notif-item .t{ font-size:10.5px; color:var(--ink-soft); margin-top:4px; font-family:'JetBrains Mono',monospace; }
+  .notif-empty{ text-align:center; padding:30px 10px; color:var(--ink-soft); font-size:13px; }
+
+  .hero{ padding:36px 20px 0; max-width:none; }
+  .hero-banner{ max-width:1120px; margin:0 auto; background:linear-gradient(120deg,var(--ink) 0%, #2A2C55 100%); border-radius:24px; padding:44px 36px; display:grid; grid-template-columns:1.1fr 0.9fr; gap:32px; align-items:center; color:#fff; position:relative; overflow:hidden; }
+  .hero-banner::after{ content:""; position:absolute; inset:0; background:radial-gradient(circle at 85% 20%, rgba(79,70,229,0.5), transparent 55%); pointer-events:none; }
+  .hero-chips{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; position:relative; }
+  .hchip{ display:flex; align-items:center; gap:6px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.18); padding:6px 11px; border-radius:999px; font-size:11.5px; font-weight:600; }
+  .hero-banner h1{ font-size:clamp(28px,4.6vw,42px); font-weight:800; line-height:1.15; position:relative; }
+  .hero-banner p{ margin-top:12px; color:#C9CADF; max-width:44ch; font-size:15px; position:relative; }
+  .hero-photo{ border-radius:18px; overflow:hidden; aspect-ratio:4/3.2; position:relative; box-shadow:0 30px 50px -20px rgba(0,0,0,0.5); }
+  .hero-photo img{ width:100%; height:100%; object-fit:cover; }
+
+  .widget-wrap{ max-width:1120px; margin:-38px auto 0; padding:0 20px; position:relative; z-index:10; }
+  .widget{ background:var(--surface); border:1px solid var(--line); border-radius:20px; box-shadow:0 24px 50px -24px rgba(20,21,31,0.3); padding:20px; }
+  .widget-grid{ display:grid; grid-template-columns:1.1fr 1fr 1.4fr auto; gap:14px; align-items:end; }
+  .field label{ display:block; font-size:11px; font-weight:700; color:var(--ink-soft); margin-bottom:7px; }
+  .field input[type=date]{ width:100%; padding:10px 12px; border:1.5px solid var(--line); border-radius:10px; font-size:14px; color:var(--ink); background:var(--bg); }
+  .stepper{ display:flex; align-items:center; border:1.5px solid var(--line); border-radius:10px; overflow:hidden; background:var(--bg); }
+  .stepper button{ width:38px; height:40px; background:transparent; font-size:16px; color:var(--ink); }
+  .stepper button:hover{ background:var(--line); }
+  .stepper .val{ flex:1; text-align:center; font-family:'JetBrains Mono',monospace; font-size:14px; }
+  .roomtype-select{ display:flex; flex-wrap:wrap; gap:6px; }
+  .chip{ font-size:12px; padding:7px 11px; border-radius:999px; border:1.5px solid var(--line); background:var(--bg); display:flex; align-items:center; gap:6px; color:var(--ink-soft); font-weight:600; }
+  .chip .dot{ width:8px; height:8px; border-radius:50%; }
+  .chip.active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .search-btn{ background:var(--primary); color:#fff; padding:12px 22px; border-radius:10px; font-weight:700; font-size:14px; white-space:nowrap; }
+  .search-btn:hover{ background:var(--primary-dark); }
+  .search-btn:disabled{ background:var(--line); color:#9CA0B0; cursor:not-allowed; }
+
+  @media(max-width:900px){
+    .hero-banner{ grid-template-columns:1fr; } .hero-photo{ order:-1; }
+    .widget-grid{ grid-template-columns:1fr 1fr; } .roomtype-select, .search-btn{ grid-column:1/-1; }
+  }
+
+  section{ max-width:1120px; margin:0 auto; padding:52px 20px; }
+  .section-head{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+  .section-head h2{ font-size:24px; font-weight:800; }
+  .section-head .count{ font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--ink-soft); }
+  .section-sub{ font-size:13.5px; color:var(--ink-soft); margin-top:-12px; margin-bottom:20px; }
+
+  .banner-closed{ background:var(--danger-wash); color:#B23434; border-radius:14px; padding:14px 18px; margin-bottom:20px; font-size:13.5px; font-weight:600; display:flex; align-items:center; gap:10px; }
+
+  /* ===== Legend ===== */
+  .legend{ display:flex; flex-wrap:wrap; gap:10px 18px; margin-bottom:18px; }
+  .legend-item{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--ink-soft); }
+  .legend-swatch{ width:9px; height:9px; border-radius:50%; }
+
+  /* ===== Month calendar ===== */
+  .month-cal-wrap{ background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:18px; }
+  .month-nav{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .month-nav button{ width:34px; height:34px; border-radius:10px; background:var(--bg); border:1px solid var(--line); font-size:16px; }
+  .month-nav button:hover{ background:var(--line); }
+  .month-nav .label{ font-weight:800; font-size:16px; }
+  .month-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+  .dow{ text-align:center; font-size:11px; font-weight:700; color:var(--ink-soft); padding-bottom:4px; }
+  .day-cell{ aspect-ratio:1/0.92; border-radius:11px; border:1px solid var(--line); padding:6px 6px 5px; display:flex; flex-direction:column; cursor:pointer; background:#fff; position:relative; }
+  .day-cell.empty{ visibility:hidden; }
+  .day-cell:not(.closed):hover{ border-color:var(--primary); box-shadow:0 0 0 1px var(--primary); }
+  .day-cell.today{ border-color:var(--primary); }
+  .day-cell.today .dnum{ color:var(--primary); }
+  .day-cell.closed{ background:#F4F4F8; cursor:not-allowed; }
+  .day-cell .dnum{ font-size:12px; font-weight:700; }
+  .day-cell .dots{ display:flex; flex-wrap:wrap; gap:3px; margin-top:auto; }
+  .day-cell .dots .d{ width:7px; height:7px; border-radius:50%; }
+  .day-cell .dots .d.off{ opacity:0.22; }
+  .day-cell .lockmark{ position:absolute; top:5px; right:6px; font-size:10px; opacity:0.55; }
+
+  /* ===== Room cards ===== */
+  .room-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:18px; }
+  .room-card{ background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; display:flex; flex-direction:column; transition:transform .15s ease, box-shadow .15s ease; }
+  .room-card:hover{ transform:translateY(-4px); box-shadow:0 20px 34px -20px rgba(20,21,31,0.25); }
+  .room-media{ position:relative; height:160px; overflow:hidden; }
+  .room-media img{ width:100%; height:100%; object-fit:cover; }
+  .room-media .tag{ position:absolute; top:10px; left:10px; background:rgba(255,255,255,0.92); padding:5px 10px; border-radius:999px; font-size:11px; font-weight:700; display:flex; align-items:center; gap:5px; }
+  .room-media .tag .dot{ width:7px; height:7px; border-radius:50%; }
+  .room-body{ padding:16px; display:flex; flex-direction:column; gap:8px; flex:1; }
+  .room-body h3{ font-size:16.5px; font-weight:800; }
+  .room-meta{ display:flex; gap:10px; font-size:12px; color:var(--ink-soft); }
+  .room-desc{ font-size:13px; color:var(--ink-soft); flex:1; }
+  .room-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+  .room-price .num{ font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; }
+  .room-price .unit{ font-size:10.5px; color:var(--ink-soft); }
+  .add-btn{ background:var(--ink); color:#fff; padding:9px 15px; border-radius:10px; font-size:12.5px; font-weight:700; }
+  .add-btn:hover{ background:var(--primary); }
+  .add-btn:disabled{ background:var(--line); color:#9CA0B0; cursor:not-allowed; }
+
+  /* ===== Gallery ===== */
+  .gallery-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:12px; }
+  .gallery-item{ border-radius:14px; overflow:hidden; cursor:pointer; position:relative; aspect-ratio:4/3; }
+  .gallery-item img{ width:100%; height:100%; object-fit:cover; transition:transform .3s ease; }
+  .gallery-item:hover img{ transform:scale(1.07); }
+  .gallery-item .g-cap{ position:absolute; left:0; right:0; bottom:0; padding:8px 10px; font-size:11.5px; color:#fff; background:linear-gradient(0deg, rgba(0,0,0,.55), transparent); font-weight:600; }
+  .lightbox{ position:fixed; inset:0; background:rgba(14,15,25,0.88); z-index:96; display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s ease; padding:24px; }
+  .lightbox.open{ opacity:1; pointer-events:auto; }
+  .lightbox img{ max-width:min(880px,92vw); max-height:82vh; border-radius:14px; }
+  .lightbox-close{ position:absolute; top:20px; right:24px; background:rgba(255,255,255,0.14); color:#fff; width:38px; height:38px; border-radius:50%; font-size:20px; }
+
+  .trust .inner{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; }
+  .trust-item{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:20px; display:flex; gap:12px; align-items:flex-start; }
+  .trust-item .ic{ width:38px; height:38px; border-radius:11px; background:var(--primary-wash); color:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .trust-item .ic svg{ width:19px; height:19px; }
+  .trust-item h4{ font-size:14.5px; font-weight:800; margin-bottom:3px; }
+  .trust-item p{ font-size:12.5px; color:var(--ink-soft); }
+
+  footer{ padding:34px 20px 44px; border-top:1px solid var(--line); }
+  .footer-inner{ max-width:1120px; margin:0 auto; display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; font-size:12.5px; color:var(--ink-soft); }
+  .footer-links{ display:flex; gap:16px; flex-wrap:wrap; }
+
+  .overlay{ position:fixed; inset:0; background:rgba(20,21,31,0.45); z-index:60; opacity:0; pointer-events:none; transition:opacity .25s ease; }
+  .overlay.open{ opacity:1; pointer-events:auto; }
+  .drawer{ position:fixed; top:0; right:0; height:100%; width:min(400px,92vw); background:var(--bg); z-index:61; transform:translateX(100%); transition:transform .3s ease; display:flex; flex-direction:column; box-shadow:-20px 0 40px rgba(0,0,0,0.2); }
+  .drawer.open{ transform:translateX(0); }
+  .drawer-head{ padding:18px 20px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; background:var(--surface); }
+  .drawer-head h3{ font-size:17px; font-weight:800; }
+  .drawer-close{ background:transparent; font-size:22px; line-height:1; color:var(--ink-soft); }
+  .drawer-body{ flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:12px; }
+  .cart-empty{ text-align:center; color:var(--ink-soft); font-size:13.5px; padding:40px 10px; }
+  .cart-item{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px; display:flex; gap:10px; }
+  .cart-item .ci-swatch{ width:6px; border-radius:4px; flex-shrink:0; }
+  .cart-item .ci-body{ flex:1; }
+  .cart-item h4{ font-size:14px; font-weight:700; margin-bottom:2px; }
+  .cart-item .ci-meta{ font-size:11px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace; }
+  .cart-item .ci-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+  .cart-item .ci-price{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13.5px; }
+  .ci-remove{ background:transparent; color:var(--danger); font-size:12px; font-weight:700; }
+  .drawer-foot{ border-top:1px solid var(--line); padding:16px 20px; display:flex; flex-direction:column; gap:10px; background:var(--surface); }
+  .coupon-row{ display:flex; gap:8px; }
+  .coupon-row input{ flex:1; padding:9px 10px; border:1.5px solid var(--line); border-radius:10px; font-size:13px; }
+  .coupon-row button{ padding:9px 12px; border-radius:10px; background:var(--bg); border:1.5px solid var(--line); font-size:12.5px; font-weight:700; }
+  .total-row{ display:flex; justify-content:space-between; align-items:baseline; }
+  .total-row .label{ font-size:12.5px; color:var(--ink-soft); }
+  .total-row .val{ font-size:22px; font-weight:800; font-family:'JetBrains Mono',monospace; }
+  .checkout-btn{ background:var(--primary); color:#fff; padding:14px; border-radius:12px; font-weight:700; font-size:14.5px; }
+  .checkout-btn:hover{ background:var(--primary-dark); }
+  .checkout-btn:disabled{ background:var(--line); color:#9CA0B0; cursor:not-allowed; }
+
+  /* ===== Generic modal ===== */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(14,15,25,0.55); z-index:90; display:none; align-items:center; justify-content:center; padding:16px; }
+  .modal-overlay.open{ display:flex; }
+  .modal{ background:var(--surface); border-radius:20px; width:min(520px,100%); max-height:90vh; overflow-y:auto; box-shadow:0 40px 70px -20px rgba(0,0,0,0.4); }
+  .modal-head{ padding:18px 20px 0; display:flex; align-items:flex-start; justify-content:space-between; }
+  .steps{ display:flex; gap:18px; }
+  .step{ display:flex; flex-direction:column; align-items:center; gap:6px; font-size:10.5px; color:var(--ink-soft); font-weight:700; }
+  .step::before{ content:attr(data-step); width:26px; height:26px; border-radius:50%; background:var(--line); color:var(--ink-soft); display:flex; align-items:center; justify-content:center; font-size:12px; }
+  .step.active::before{ background:var(--primary); color:#fff; }
+  .step.done::before{ content:"✓"; background:var(--accent); color:#fff; }
+  .modal-close{ background:var(--bg); width:32px; height:32px; border-radius:50%; font-size:18px; color:var(--ink-soft); }
+  .modal-body{ padding:18px 22px 24px; }
+  .modal-body h3{ font-size:18px; font-weight:800; margin-bottom:4px; }
+  .modal-body .sub{ font-size:12.5px; color:var(--ink-soft); margin-bottom:18px; }
+  .mrow{ display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); font-size:13.5px; }
+  .mrow .l{ color:var(--ink-soft); } .mrow .r{ font-weight:700; }
+  .mtotal{ display:flex; justify-content:space-between; padding-top:12px; font-size:16px; font-weight:800; }
+  .form-group{ margin-bottom:14px; }
+  .form-group label{ display:block; font-size:12px; font-weight:700; margin-bottom:6px; }
+  .form-group input, .form-group textarea{ width:100%; padding:11px 12px; border:1.5px solid var(--line); border-radius:10px; font-size:14px; background:var(--bg); }
+  .form-group textarea{ resize:vertical; min-height:64px; }
+  .pay-box{ background:var(--primary-wash); border-radius:14px; padding:16px; margin-bottom:16px; }
+  .pay-box .amt{ font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:800; color:var(--primary-dark); }
+  .pay-box .bank{ font-size:13px; margin-top:10px; line-height:1.7; }
+  .pay-box .bank b{ font-family:'JetBrains Mono',monospace; }
+  .pay-choice{ display:flex; gap:10px; margin-bottom:16px; }
+  .pay-choice button{ flex:1; padding:12px; border-radius:12px; border:1.5px solid var(--line); background:var(--bg); font-size:12.5px; font-weight:700; text-align:left; color:var(--ink); }
+  .pay-choice button.active{ border-color:var(--primary); background:var(--primary-wash); color:var(--primary-dark); }
+  .pay-choice button .small{ display:block; font-weight:500; font-size:11px; color:var(--ink-soft); margin-top:3px; }
+  .pay-choice button.active .small{ color:var(--primary-dark); }
+  .dropzone{ border:2px dashed var(--line); border-radius:14px; padding:22px; text-align:center; cursor:pointer; position:relative; }
+  .dropzone:hover{ border-color:var(--primary); background:var(--primary-wash); }
+  .dropzone input[type=file]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+  .dropzone .dz-text{ font-size:13px; color:var(--ink-soft); }
+  .slip-preview{ margin-top:12px; display:none; align-items:center; gap:10px; background:var(--bg); border-radius:12px; padding:10px; }
+  .slip-preview.show{ display:flex; }
+  .slip-preview img{ width:52px; height:52px; object-fit:cover; border-radius:8px; }
+  .slip-preview .sp-name{ font-size:12.5px; font-weight:600; flex:1; }
+  .slip-preview .sp-remove{ color:var(--danger); font-size:12px; font-weight:700; background:none; }
+  .modal-actions{ display:flex; gap:10px; margin-top:18px; }
+  .btn{ flex:1; padding:13px; border-radius:12px; font-weight:700; font-size:14px; }
+  .btn-primary{ background:var(--primary); color:#fff; }
+  .btn-primary:hover{ background:var(--primary-dark); }
+  .btn-primary:disabled{ background:var(--line); color:#9CA0B0; cursor:not-allowed; }
+  .btn-ghost{ background:var(--bg); color:var(--ink); border:1.5px solid var(--line); flex:0 0 auto; padding:13px 18px; }
+  .success-wrap{ text-align:center; padding:8px 0 4px; }
+  .success-icon{ width:64px; height:64px; border-radius:50%; background:var(--accent-wash); color:var(--accent); display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:30px; }
+  .booking-code{ font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:800; background:var(--bg); border-radius:10px; padding:10px 16px; display:inline-block; margin:10px 0; letter-spacing:0.04em; }
+  .status-pill{ display:inline-flex; align-items:center; gap:6px; padding:6px 13px; border-radius:999px; font-size:12px; font-weight:700; }
+  .status-pill.pending, .status-pill.verify{ background:var(--warn-wash); color:#92650A; }
+  .status-pill.confirmed{ background:var(--accent-wash); color:#0B7A63; }
+  .status-pill.rejected{ background:var(--danger-wash); color:#B23434; }
+
+  /* ===== Day panel / Booking modal specifics ===== */
+  .avail-row{ display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--line); gap:10px; }
+  .avail-row:last-child{ border-bottom:none; }
+  .avail-row .l{ display:flex; align-items:center; gap:9px; font-size:13.5px; font-weight:700; }
+  .avail-row .l .dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .avail-row .cnt{ font-size:11.5px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace; }
+  .avail-row .r{ display:flex; align-items:center; gap:10px; }
+  .avail-row .price{ font-size:12px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace; white-space:nowrap; }
+  .avail-row button{ padding:7px 13px; border-radius:9px; font-size:12px; font-weight:700; background:var(--ink); color:#fff; white-space:nowrap; }
+  .avail-row button:disabled{ background:var(--line); color:#9CA0B0; cursor:not-allowed; }
+  .bm-head{ display:flex; align-items:center; gap:10px; margin-bottom:6px; }
+  .bm-head .dot{ width:11px; height:11px; border-radius:50%; }
+  .bm-fields{ display:grid; grid-template-columns:1.2fr 1fr; gap:12px; margin:14px 0; }
+  .avail-msg{ border-radius:12px; padding:11px 13px; font-size:12.5px; font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .avail-msg.ok{ background:var(--accent-wash); color:#0B7A63; }
+  .avail-msg.bad{ background:var(--danger-wash); color:#B23434; }
+
+  .toast{ position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(140%); background:var(--ink); color:#fff; padding:13px 20px; border-radius:12px; font-size:13px; z-index:97; transition:transform .3s ease; max-width:90vw; display:flex; align-items:center; gap:8px; }
+  .toast.show{ transform:translateX(-50%) translateY(0); }
+
+  /* ===== Host dashboard ===== */
+  .host-wrap{ display:none; }
+  .host-wrap.active{ display:block; }
+  .host-subnav{ display:flex; gap:6px; margin-bottom:22px; border-bottom:1px solid var(--line); }
+  .host-subnav button{ padding:11px 6px; margin-right:20px; font-size:13.5px; font-weight:700; color:var(--ink-soft); border-bottom:2.5px solid transparent; }
+  .host-subnav button.active{ color:var(--ink); border-color:var(--primary); }
+  .host-subnav button:hover{ color:var(--ink); }
+  #policyTextarea{ width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:10px; font-size:13.5px; font-family:inherit; resize:vertical; background:var(--bg); line-height:1.7; }
+  .settings-card{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:20px; margin-bottom:24px; }
+  .settings-card h3{ font-size:15px; font-weight:800; margin-bottom:2px; }
+  .settings-card .desc-top{ font-size:12px; color:var(--ink-soft); margin-bottom:8px; }
+  .settings-row{ display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--line); gap:14px; flex-wrap:wrap; }
+  .settings-row:last-of-type{ border-bottom:none; }
+  .settings-row .lbl{ font-size:13.5px; font-weight:700; }
+  .settings-row .desc{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+  .toggle{ width:44px; height:26px; border-radius:999px; background:var(--line); position:relative; cursor:pointer; flex-shrink:0; transition:background .2s; }
+  .toggle.on{ background:var(--accent); }
+  .toggle .knob{ position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:left .2s; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+  .toggle.on .knob{ left:21px; }
+  .num-input{ width:76px; padding:8px 10px; border:1.5px solid var(--line); border-radius:8px; font-size:13px; text-align:center; }
+  .blackout-add{ display:flex; gap:8px; margin-top:4px; }
+  .blackout-add input{ flex:1; padding:9px 10px; border:1.5px solid var(--line); border-radius:8px; font-size:13px; }
+  .blackout-add button{ padding:9px 14px; border-radius:8px; background:var(--ink); color:#fff; font-size:12.5px; font-weight:700; white-space:nowrap; }
+  .blackout-list{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .blackout-chip{ display:flex; align-items:center; gap:6px; background:var(--danger-wash); color:#B23434; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+  .blackout-chip button{ background:none; color:#B23434; font-weight:800; font-size:13px; }
+
+  .photo-manage-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:14px; }
+  .photo-card{ background:var(--surface); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  .photo-card.wide{ grid-column:span 2; }
+  .photo-card .pv{ position:relative; aspect-ratio:4/3; background:var(--bg); }
+  .photo-card .pv img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .photo-card .pv .empty-pv{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--ink-soft); font-size:11.5px; text-align:center; padding:10px; }
+  .photo-card .pv label.upload-overlay{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:6px;
+    background:rgba(20,21,31,0.5); color:#fff; font-size:12px; font-weight:700; opacity:0; transition:opacity .2s; cursor:pointer;
+  }
+  .photo-card .pv:hover label.upload-overlay, .photo-card .pv.no-img label.upload-overlay{ opacity:1; }
+  .photo-card .pv input[type=file]{ display:none; }
+  .photo-card .meta{ padding:10px 12px; }
+  .photo-card .meta .t{ font-size:12.5px; font-weight:700; }
+  .photo-card .meta .st{ font-size:10.5px; color:var(--ink-soft); margin-top:2px; }
+  .photo-card .meta input[type=text]{ width:100%; margin-top:8px; padding:7px 9px; border:1.5px solid var(--line); border-radius:8px; font-size:12px; }
+  .photo-manage-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px; }
+  .add-photo-btn{ padding:9px 14px; border-radius:9px; background:var(--ink); color:#fff; font-size:12.5px; font-weight:700; }
+  .photo-group-label{ font-size:12px; font-weight:700; color:var(--ink-soft); text-transform:uppercase; letter-spacing:0.04em; margin:18px 0 10px; }
+  .photo-group-label:first-child{ margin-top:0; }
+
+  .stat-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin-bottom:24px; }
+  .stat-card{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:18px; }
+  .stat-card .lbl{ font-size:12px; color:var(--ink-soft); font-weight:600; }
+  .stat-card .num{ font-size:26px; font-weight:800; margin-top:6px; font-family:'JetBrains Mono',monospace; }
+  .stat-card.warn .num{ color:var(--warn); }
+  .stat-card.ok .num{ color:var(--accent); }
+
+  .booking-row{ background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; display:flex; gap:14px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+  .booking-row .slip-thumb{ width:56px; height:56px; border-radius:10px; object-fit:cover; flex-shrink:0; background:var(--bg); cursor:pointer; }
+  .booking-row .info{ flex:1; min-width:200px; }
+  .booking-row .info .code{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink-soft); }
+  .booking-row .info h4{ font-size:14.5px; font-weight:800; margin:2px 0; }
+  .booking-row .info .meta{ font-size:12px; color:var(--ink-soft); }
+  .booking-row .price{ font-family:'JetBrains Mono',monospace; font-weight:800; font-size:15px; white-space:nowrap; }
+  .booking-row .price .sub{ display:block; font-size:10.5px; font-weight:500; color:var(--ink-soft); }
+  .booking-row .actions{ display:flex; gap:8px; }
+  .booking-row .actions button{ padding:8px 13px; border-radius:9px; font-size:12.5px; font-weight:700; white-space:nowrap; }
+  .btn-approve{ background:var(--accent); color:#fff; }
+  .btn-reject{ background:var(--surface); color:var(--danger); border:1.5px solid var(--danger-wash); }
+  .btn-remind{ background:var(--surface); color:var(--primary); border:1.5px solid var(--primary-wash); }
+  .empty-state{ text-align:center; padding:50px 20px; color:var(--ink-soft); }
+  .empty-state svg{ width:44px; height:44px; margin:0 auto 12px; opacity:0.4; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark" id="brandMark">ณ</div>
+    <div class="brand-text"><div class="name" id="brandName">ในสวน เขาใหญ่</div><div class="sub" id="brandSub">NAI SUAN KHAOYAI</div></div>
+  </div>
+  <div class="role-switch">
+    <button class="active" id="roleGuestBtn" onclick="setRole('guest')">ผู้จอง</button>
+    <button id="roleHostBtn" onclick="attemptHostAccess()">เจ้าของที่พัก</button>
+  </div>
+  <div class="header-actions">
+    <a class="line-btn" href="https://lin.ee/FRmxbKy" target="_blank" rel="noopener" id="lineBtn">แชท LINE</a>
+    <button class="icon-btn" id="notifBtn" onclick="toggleNotifDropdown()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg>
+      <span class="badge" id="notifBadge" style="display:none;">0</span>
+    </button>
+    <button class="icon-btn" id="cartBtn" onclick="toggleDrawer(true)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h2l.4 2M7 13h10l3-8H5.4M7 13L5.4 5M7 13l-2 5h13M9 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"/></svg>
+      <span class="badge" id="cartBadge" style="display:none;">0</span>
+    </button>
+  </div>
+  <div class="dropdown" id="notifDropdown">
+    <div class="dropdown-title">การแจ้งเตือน</div>
+    <div id="notifList"></div>
+  </div>
+</header>
+
+<div class="modal-overlay" id="hostLoginOverlay">
+  <div class="modal" style="width:min(380px,100%);">
+    <div class="modal-head"><div></div><button class="modal-close" onclick="closeHostLoginModal()">×</button></div>
+    <div class="modal-body">
+      <h3>เข้าสู่ระบบเจ้าของที่พัก</h3>
+      <div class="sub">กรอกชื่อผู้ใช้และรหัสผ่านเพื่อเข้าถึงแดชบอร์ด</div>
+      <div class="form-group"><label>อีเมล</label><input type="email" id="hostLoginUser" placeholder="owner@yourdomain.com" autocomplete="username"></div>
+      <div class="form-group"><label>รหัสผ่าน</label><input type="password" id="hostLoginPass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter') submitHostLogin()"></div>
+      <div id="hostLoginError" style="display:none; color:var(--danger); font-size:12.5px; font-weight:600; margin:-6px 0 12px;">ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง</div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeHostLoginModal()">ยกเลิก</button>
+        <button class="btn btn-primary" onclick="submitHostLogin()">เข้าสู่ระบบ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ GUEST VIEW ============ -->
+<div id="guestView">
+
+<section class="hero">
+  <div class="hero-banner">
+    <div>
+      <div class="hero-chips">
+        <div class="hchip">⚡ ยืนยันไว จองแล้วรู้ผลใน 1 วัน</div>
+        <div class="hchip">🔒 วางมัดจำได้ ไม่ต้องจ่ายเต็ม</div>
+      </div>
+      <h1 id="heroHeadline">จองกระท่อมกลางป่า<br>ใกล้เขาใหญ่ ได้ในไม่กี่คลิก</h1>
+      <p id="heroLede">ดูปฏิทินเต็มเดือนว่าวันไหนห้องไหนว่าง เลือกวันที่ ยืนยันยอด แล้วค่อยชำระ — ระบบแจ้งเตือนทั้งคุณและเจ้าของที่พักอัตโนมัติ</p>
+    </div>
+    <div class="hero-photo"><img id="heroImg" src="https://picsum.photos/seed/naisuan-v4-hero/700/560" alt="กระท่อมกลางป่า ในสวน เขาใหญ่"></div>
+  </div>
+</section>
+
+<div class="widget-wrap">
+  <div class="widget">
+    <div class="widget-grid">
+      <div class="field"><label for="checkinDate">เช็คอิน</label><input type="date" id="checkinDate"></div>
+      <div class="field"><label>จำนวนคืน</label>
+        <div class="stepper"><button onclick="changeNights(-1)">–</button><div class="val" id="nightsVal">1</div><button onclick="changeNights(1)">+</button></div>
+      </div>
+      <div class="field"><label>ประเภทกระท่อม</label><div class="roomtype-select" id="typeChips"></div></div>
+      <button class="search-btn" id="widgetSearchBtn" onclick="searchAvailability()">ค้นหาห้องว่าง</button>
+    </div>
+  </div>
+</div>
+
+<section id="calendar-section">
+  <div class="section-head"><h2>ปฏิทินห้องว่าง</h2><div class="count mono" id="calRange"></div></div>
+  <div id="closedBanner" class="banner-closed" style="display:none;">🚫 ขณะนี้ปิดรับจองล่วงหน้าชั่วคราว — ทักแชท LINE เพื่อสอบถามคิวว่างได้โดยตรง</div>
+  <div class="legend" id="typeLegend"></div>
+  <div class="section-sub">แตะวันที่เพื่อดูห้องว่างและเลือกจอง</div>
+  <div class="month-cal-wrap">
+    <div class="month-nav">
+      <button onclick="changeMonth(-1)">‹</button>
+      <div class="label" id="monthLabel"></div>
+      <button onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="month-grid" id="monthGrid"></div>
+  </div>
+</section>
+
+<section id="rooms">
+  <div class="section-head"><h2>ประเภทกระท่อม</h2><div class="count mono" id="roomCount">4 ประเภท</div></div>
+  <div class="room-grid" id="roomGrid"></div>
+</section>
+
+<section id="gallery">
+  <div class="section-head"><h2>บรรยากาศที่พัก</h2><div class="count mono">แตะภาพเพื่อดูขนาดใหญ่</div></div>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
+
+<section class="trust">
+  <div class="section-head"><h2>จองด้วยความมั่นใจ</h2></div>
+  <div class="inner">
+    <div class="trust-item"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg></div><div><h4>ดูห้องว่างเป็นรายเดือน</h4><p>เห็นภาพรวมทั้งเดือนก่อนตัดสินใจ ไม่ต้องเลื่อนดูทีละสัปดาห์</p></div></div>
+    <div class="trust-item"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/></svg></div><div><h4>วางมัดจำได้</h4><p>จ่ายมัดจำก่อน ส่วนที่เหลือชำระวันเข้าพัก</p></div></div>
+    <div class="trust-item"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></div><div><h4>แจ้งเตือนสองทาง</h4><p>ทั้งผู้จองและเจ้าของที่พักได้รับแจ้งเตือนทุกความเคลื่อนไหว</p></div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div id="footerCopy">© 2026 ในสวน เขาใหญ่ · ปากช่อง</div>
+    <div class="footer-links">
+      <a href="tel:0929889808" id="footerPhoneLink">📞 092-988-9808</a>
+      <a href="#" id="footerLineLink" target="_blank" rel="noopener">LINE Official</a>
+      <a href="#" id="footerQrLink" onclick="openLightbox(lineQrSrc,'สแกน QR เพิ่มเพื่อน LINE'); return false;" style="display:none;">📱 สแกน QR เพิ่มเพื่อน LINE</a>
+      <a href="#" id="footerFbLink" target="_blank" rel="noopener" style="display:none;">Facebook</a>
+      <a href="#" id="footerIgLink" target="_blank" rel="noopener" style="display:none;">Instagram</a>
+      <a href="#" onclick="openPolicyModal(); return false;">นโยบายที่พัก</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" id="policyModalOverlay">
+  <div class="modal">
+    <div class="modal-head"><div></div><button class="modal-close" onclick="closePolicyModal()">×</button></div>
+    <div class="modal-body">
+      <h3>นโยบายที่พัก</h3>
+      <div class="sub" id="policyModalContent" style="white-space:pre-wrap; color:var(--ink); font-size:14px; line-height:1.8;"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /guestView -->
+
+<!-- ============ HOST VIEW ============ -->
+<div id="hostView" class="host-wrap">
+  <section>
+    <div class="section-head"><h2>แดชบอร์ดเจ้าของที่พัก</h2><button class="ci-remove" style="font-size:12.5px;" onclick="logoutHost()">ออกจากระบบ</button></div>
+
+    <div class="host-subnav">
+      <button class="active" id="hostTabBookings" onclick="setHostSubView('bookings')">📋 จัดการการจอง</button>
+      <button id="hostTabSettings" onclick="setHostSubView('settings')">⚙️ ตั้งค่า</button>
+    </div>
+
+    <!-- ---- Sub-page: Booking management ---- -->
+    <div id="hostBookingsPage">
+      <div class="stat-row">
+        <div class="stat-card warn"><div class="lbl">รอตรวจสอบสลิป</div><div class="num" id="statPending">0</div></div>
+        <div class="stat-card ok"><div class="lbl">ยืนยันแล้ว</div><div class="num" id="statConfirmed">0</div></div>
+        <div class="stat-card"><div class="lbl">รายได้ที่ยืนยันแล้ว</div><div class="num" id="statRevenue">฿0</div></div>
+        <div class="stat-card"><div class="lbl">การจองทั้งหมด</div><div class="num" id="statTotal">0</div></div>
+      </div>
+      <div id="bookingList"></div>
+    </div>
+
+    <!-- ---- Sub-page: Settings ---- -->
+    <div id="hostSettingsPage" style="display:none;">
+
+      <div class="settings-card">
+        <h3>📋 ข้อมูลที่พักและช่องทางติดต่อ</h3>
+        <div class="desc-top">แก้ไขแล้วอัปเดตหน้าเว็บฝั่งผู้จองทันที</div>
+        <div id="propertyInfoForm"></div>
+      </div>
+
+      <div class="settings-card">
+        <h3>✏️ ข้อความหน้าแรก</h3>
+        <div class="desc-top">แก้หัวข้อและคำโปรยในแบนเนอร์หน้าแรก — ขึ้นบรรทัดใหม่ในหัวข้อได้ด้วยการกด Enter</div>
+        <div id="heroContentForm"></div>
+      </div>
+
+      <div class="settings-card">
+        <h3>⚙️ ตั้งค่าระบบจองล่วงหน้า</h3>
+        <div class="desc-top">ควบคุมว่าใครจองได้เมื่อไหร่ และปิดรับจองชั่วคราวได้ทันทีเมื่อจำเป็น</div>
+
+        <div class="settings-row">
+          <div><div class="lbl">เปิดรับจองล่วงหน้า</div><div class="desc">ปิดเพื่อหยุดรับจองใหม่ชั่วคราวทั้งระบบ</div></div>
+          <div class="toggle on" id="toggleOpen" onclick="toggleBookingOpen()"><div class="knob"></div></div>
+        </div>
+        <div class="settings-row">
+          <div><div class="lbl">จองล่วงหน้าได้สูงสุด</div><div class="desc">จำนวนวันล่วงหน้าที่เปิดให้จอง</div></div>
+          <div><input type="number" class="num-input" id="maxAdvanceInput" value="90" min="1" onchange="updateSetting('maxAdvanceDays', this.value)"> วัน</div>
+        </div>
+        <div class="settings-row">
+          <div><div class="lbl">ต้องจองล่วงหน้าอย่างน้อย</div><div class="desc">กันการจองกะทันหันเกินไป</div></div>
+          <div><input type="number" class="num-input" id="minNoticeInput" value="0" min="0" onchange="updateSetting('minNoticeDays', this.value)"> วัน</div>
+        </div>
+        <div class="settings-row">
+          <div><div class="lbl">เปอร์เซ็นต์มัดจำ</div><div class="desc">ยอดขั้นต่ำที่ต้องวางมัดจำเพื่อยืนยันการจอง</div></div>
+          <div><input type="number" class="num-input" id="depositInput" value="30" min="1" max="100" onchange="updateSetting('depositPercent', this.value)"> %</div>
+        </div>
+        <div class="settings-row" style="flex-direction:column; align-items:stretch;">
+          <div style="margin-bottom:8px;"><div class="lbl">ปิดรับจองเฉพาะวัน (blackout date)</div><div class="desc">เช่น วันปิดปรับปรุง หรือวันที่เจ้าของใช้เอง</div></div>
+          <div class="blackout-add">
+            <input type="date" id="blackoutInput">
+            <button onclick="addBlackout()">เพิ่มวันปิด</button>
+          </div>
+          <div class="blackout-list" id="blackoutList"></div>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h3>📄 นโยบายที่พัก</h3>
+        <div class="desc-top">ข้อความนี้จะแสดงเมื่อผู้จองกดลิงก์ "นโยบายที่พัก" ที่ท้ายหน้าเว็บ</div>
+        <div class="form-group" style="margin-bottom:0;">
+          <textarea id="policyTextarea" rows="8" placeholder="เช่น เงื่อนไขการยกเลิก, เวลาเช็คอิน/เช็คเอาท์, นโยบายมัดจำ ฯลฯ" onchange="updatePolicyText(this.value)"></textarea>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <div class="photo-manage-head">
+          <div><h3>🖼️ จัดการรูปภาพ</h3><div class="desc-top">อัปโหลดรูปแทนที่รูปตัวอย่าง เปลี่ยนแล้วอัปเดตหน้าเว็บฝั่งผู้จองทันที (แก้ราคาห้องได้จากการ์ดรูปด้านล่างด้วย)</div></div>
+        </div>
+
+        <div class="photo-group-label">ภาพหน้าปก (Hero)</div>
+        <div class="photo-manage-grid" id="photoHeroGrid"></div>
+
+        <div class="photo-group-label">QR Code เพิ่มเพื่อน LINE</div>
+        <div class="photo-manage-grid" id="photoQrGrid"></div>
+
+        <div class="photo-group-label">รูปและราคาประจำประเภทกระท่อม</div>
+        <div class="photo-manage-grid" id="photoRoomGrid"></div>
+
+        <div class="photo-group-label" style="display:flex; align-items:center; justify-content:space-between;">
+          <span>แกลเลอรีบรรยากาศที่พัก</span>
+          <button class="add-photo-btn" onclick="addGalleryPhoto()">+ เพิ่มรูปใหม่</button>
+        </div>
+        <div class="photo-manage-grid" id="photoGalleryGrid"></div>
+      </div>
+
+    </div><!-- /hostSettingsPage -->
+  </section>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(event)">×</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<!-- ===== Cart drawer ===== -->
+<div class="overlay" id="overlay" onclick="toggleDrawer(false)"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head"><h3>ตะกร้าจอง</h3><button class="drawer-close" onclick="toggleDrawer(false)">×</button></div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-foot">
+    <div class="coupon-row"><input type="text" id="couponInput" placeholder="รหัสคูปอง (ถ้ามี)"><button onclick="applyCoupon()">ใช้รหัส</button></div>
+    <div class="total-row"><span class="label">ยอดรวม</span><span class="val" id="totalVal">฿0</span></div>
+    <button class="checkout-btn" id="checkoutBtn" onclick="openCheckout()" disabled>ดำเนินการจอง</button>
+  </div>
+</div>
+
+<!-- ===== Day panel modal ===== -->
+<div class="modal-overlay" id="dayPanelOverlay">
+  <div class="modal">
+    <div class="modal-head"><div></div><button class="modal-close" onclick="closeDayPanel()">×</button></div>
+    <div class="modal-body" id="dayPanelBody"></div>
+  </div>
+</div>
+
+<!-- ===== Booking modal (single room, clear confirm) ===== -->
+<div class="modal-overlay" id="bookingModalOverlay">
+  <div class="modal">
+    <div class="modal-head"><div></div><button class="modal-close" onclick="closeBookingModal()">×</button></div>
+    <div class="modal-body" id="bookingModalBody"></div>
+  </div>
+</div>
+
+<!-- ===== Checkout modal ===== -->
+<div class="modal-overlay" id="checkoutOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="steps">
+        <div class="step" data-step="1" id="stepDot1">ตะกร้า</div>
+        <div class="step" data-step="2" id="stepDot2">ข้อมูล</div>
+        <div class="step" data-step="3" id="stepDot3">ชำระเงิน</div>
+      </div>
+      <button class="modal-close" onclick="closeCheckout()">×</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">แจ้งเตือน</div>
+
+<script>
+
+/* =====================================================================
+   SUPABASE CONFIG — แก้ 2 บรรทัดนี้เป็นของโปรเจกต์คุณเอง
+   (Project Settings → API ใน Supabase Dashboard)
+   ===================================================================== */
+const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';       // เช่น https://xxxxxxx.supabase.co
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';      // anon public key
+
+const CONFIGURED = SUPABASE_URL !== 'YOUR_SUPABASE_PROJECT_URL' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY';
+// persistSession/autoRefreshToken ปิดไว้ เพื่อไม่ให้แตะ localStorage ตอนพรีวิวใน Claude
+// (เปิดเป็น true ได้เองหลังอัปโหลดขึ้นโฮสติ้งจริงแล้ว ถ้าอยากให้ล็อกอินค้างไว้ตอนรีเฟรช)
+const sb = CONFIGURED ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: false, autoRefreshToken: false }
+}) : null;
+
+/* ================= ROOM TYPE COLORS (ให้สีคงที่ต่อประเภท) ================= */
+const TYPE_COLORS = { forest:'#F59E0B', palm:'#0EA989', view:'#4F46E5', family:'#EC4899' };
+function typeColor(id){ return TYPE_COLORS[id] || '#6B7080'; }
+
+const THAI_MONTHS = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const THAI_MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const THAI_DOW = ['อา','จ','อ','พ','พฤ','ศ','ส'];
+const THAI_DOW_FULL = ['วันอาทิตย์ที่','วันจันทร์ที่','วันอังคารที่','วันพุธที่','วันพฤหัสบดีที่','วันศุกร์ที่','วันเสาร์ที่'];
+const today = new Date();
+
+/* ================= LOCAL (client-only) STATE ================= */
+let viewMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+let activeTypeFilter = null;
+let nights = 1;
+let cart = [];
+let coupon = null;
+let currentRole = 'guest';
+let checkoutStep = 1;
+let paymentChoice = 'full';
+let pendingSlip = null; // {file, previewUrl}
+let guestInfo = { name:'', phone:'', note:'' };
+let bookingModalCtx = null;
+let hostSubView = 'bookings';
+let isHostAuthenticated = false;
+let notifIdSeq = 1; // fallback local id if DB insert fails silently
+let galleryIdSeqLocal = -1;
+
+/* ================= REMOTE (Supabase-backed) STATE — filled by loadAll() ================= */
+let propertySettings = {
+  name:'ที่พักของฉัน', sub:'', phone:'', line_url:'', facebook_url:'', instagram_url:'',
+  hero_headline:'จองที่พักได้ในไม่กี่คลิก', hero_lede:'', hero_img:'', line_qr_img:'', policy_text:'',
+  booking_open:true, max_advance_days:90, min_notice_days:0, deposit_percent:30
+};
+let rooms = [];
+let galleryPhotos = [];
+let blackoutDates = [];
+let bookings = [];
+let notifications = [];
+
+/* ================= HELPERS ================= */
+function ymd(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function parseYmd(s){ const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); }
+function sameDay(a,b){ return ymd(a)===ymd(b); }
+function fmtDate(d){ return `${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()+543}`; }
+function fmtDateLong(d){ return `${THAI_DOW_FULL[d.getDay()]} ${d.getDate()} ${THAI_MONTHS[d.getMonth()]} ${d.getFullYear()+543}`; }
+function nowLabel(){ return new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'}); }
+function uniqueTypes(){
+  const seen = new Map();
+  rooms.forEach(r=>{ if(!seen.has(r.type_id)) seen.set(r.type_id, {id:r.type_id, name:r.type_name, color: r.type_color || typeColor(r.type_id)}); });
+  return [...seen.values()];
+}
+
+/* ================= SETUP-NEEDED BANNER ================= */
+function showSetupBanner(msg){
+  const bar = document.createElement('div');
+  bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:999;background:#EF4444;color:#fff;padding:10px 16px;font-size:13px;font-weight:700;text-align:center;';
+  bar.textContent = msg;
+  document.body.prepend(bar);
+}
+
+/* ================= DATA LOADING ================= */
+async function loadAll(){
+  if(!CONFIGURED){
+    showSetupBanner('⚠️ ยังไม่ได้ใส่ SUPABASE_URL / SUPABASE_ANON_KEY ในไฟล์นี้ — แก้ 2 บรรทัดบนสุดของสคริปต์ก่อนใช้งานจริง (ตอนนี้แสดงข้อมูลตัวอย่างเปล่าๆ ไว้ก่อน)');
+    rooms = [];
+    return;
+  }
+  try{
+    const [{data:ps}, {data:rm}, {data:gp}, {data:bo}, {data:bk}] = await Promise.all([
+      sb.from('property_settings').select('*').eq('id',1).single(),
+      sb.from('rooms').select('*').order('sort_order'),
+      sb.from('gallery_photos').select('*').order('sort_order'),
+      sb.from('blackout_dates').select('date'),
+      sb.from('bookings').select('*').order('created_at', {ascending:false}),
+    ]);
+    if(ps) propertySettings = ps;
+    rooms = rm || [];
+    galleryPhotos = gp || [];
+    blackoutDates = (bo||[]).map(r=>r.date);
+    bookings = (bk||[]).map(b=>({...b, checkin:parseYmd(b.checkin), checkout:parseYmd(b.checkout)}));
+  } catch(err){
+    console.error(err);
+    showSetupBanner('⚠️ เชื่อมต่อ Supabase ไม่สำเร็จ — ตรวจสอบ URL/Key และว่ารัน schema.sql แล้วหรือยัง');
+  }
+}
+async function refreshBookings(){
+  if(!CONFIGURED) return;
+  const {data} = await sb.from('bookings').select('*').order('created_at',{ascending:false});
+  bookings = (data||[]).map(b=>({...b, checkin:parseYmd(b.checkin), checkout:parseYmd(b.checkout)}));
+}
+
+/* ================= AVAILABILITY (based on REAL bookings now) ================= */
+function isDateBookable(date){
+  if(!propertySettings.booking_open) return {ok:false, reason:'ปิดรับจองล่วงหน้าชั่วคราว'};
+  const diffDays = Math.round((new Date(date.getFullYear(),date.getMonth(),date.getDate()) - new Date(today.getFullYear(),today.getMonth(),today.getDate()))/86400000);
+  if(diffDays < propertySettings.min_notice_days) return {ok:false, reason:`ต้องจองล่วงหน้าอย่างน้อย ${propertySettings.min_notice_days} วัน`};
+  if(diffDays > propertySettings.max_advance_days) return {ok:false, reason:`เปิดจองล่วงหน้าได้ไม่เกิน ${propertySettings.max_advance_days} วัน`};
+  if(blackoutDates.includes(ymd(date))) return {ok:false, reason:'ปิดรับจองวันนี้เป็นกรณีพิเศษ'};
+  return {ok:true};
+}
+function bookedCountForDate(room, date){
+  return bookings.filter(b =>
+    b.room_id===room.id &&
+    (b.status==='confirmed' || b.status==='awaiting_verification') &&
+    date >= b.checkin && date < b.checkout
+  ).length;
+}
+function availCountForDate(room, date){ return Math.max(0, room.units - bookedCountForDate(room, date)); }
+function checkRangeAvailability(room, checkinDate, n){
+  let minAvail = Infinity;
+  for(let i=0;i<n;i++){
+    const d = new Date(checkinDate); d.setDate(d.getDate()+i);
+    const bk = isDateBookable(d);
+    if(!bk.ok) return { ok:false, reason: bk.reason + ` (${fmtDate(d)})` };
+    const c = availCountForDate(room, d);
+    if(c===0) return { ok:false, reason:`ห้องเต็มในคืนวันที่ ${fmtDate(d)}` };
+    minAvail = Math.min(minAvail, c);
+  }
+  return { ok:true, minAvail };
+}
+
+/* ================= HOST LOGIN (Supabase Auth) ================= */
+function attemptHostAccess(){
+  if(isHostAuthenticated){ setRole('host'); return; }
+  openHostLoginModal();
+}
+function openHostLoginModal(){
+  document.getElementById('hostLoginUser').value = '';
+  document.getElementById('hostLoginPass').value = '';
+  document.getElementById('hostLoginError').style.display = 'none';
+  document.getElementById('hostLoginOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('hostLoginUser').focus(), 100);
+}
+function closeHostLoginModal(){ document.getElementById('hostLoginOverlay').classList.remove('open'); }
+async function submitHostLogin(){
+  if(!CONFIGURED){ document.getElementById('hostLoginError').textContent = 'ยังไม่ได้ตั้งค่า Supabase ในไฟล์นี้'; document.getElementById('hostLoginError').style.display='block'; return; }
+  const email = document.getElementById('hostLoginUser').value.trim();
+  const password = document.getElementById('hostLoginPass').value;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if(error){
+    document.getElementById('hostLoginError').textContent = 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+    document.getElementById('hostLoginError').style.display = 'block';
+    return;
+  }
+  isHostAuthenticated = true;
+  closeHostLoginModal();
+  setRole('host');
+  showToast('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับเจ้าของที่พัก');
+}
+async function logoutHost(){
+  if(CONFIGURED) await sb.auth.signOut();
+  isHostAuthenticated = false;
+  setRole('guest');
+  showToast('ออกจากระบบเจ้าของที่พักแล้ว');
+}
+
+/* ================= ROLE SWITCH ================= */
+function setRole(role){
+  currentRole = role;
+  document.getElementById('roleGuestBtn').classList.toggle('active', role==='guest');
+  document.getElementById('roleHostBtn').classList.toggle('active', role==='host');
+  document.getElementById('guestView').style.display = role==='guest' ? '' : 'none';
+  document.getElementById('hostView').classList.toggle('active', role==='host');
+  document.getElementById('cartBtn').style.display = role==='guest' ? '' : 'none';
+  document.getElementById('lineBtn').style.display = role==='guest' ? '' : 'none';
+  document.getElementById('notifDropdown').classList.remove('open');
+  renderNotifBadge(); renderNotifList();
+  if(role==='host'){ renderHostDashboard(); renderPhotoManager(); renderPropertyForm(); renderHeroContentForm(); renderPolicyEditor(); }
+}
+function setHostSubView(view){
+  hostSubView = view;
+  document.getElementById('hostTabBookings').classList.toggle('active', view==='bookings');
+  document.getElementById('hostTabSettings').classList.toggle('active', view==='settings');
+  document.getElementById('hostBookingsPage').style.display = view==='bookings' ? '' : 'none';
+  document.getElementById('hostSettingsPage').style.display = view==='settings' ? '' : 'none';
+}
+
+/* ================= BOOKING WIDGET ================= */
+document.getElementById('checkinDate').valueAsDate = today;
+function changeNights(delta){ nights = Math.max(1, Math.min(30, nights+delta)); document.getElementById('nightsVal').textContent = nights; }
+function renderTypeChips(){
+  document.getElementById('typeChips').innerHTML = uniqueTypes().map(t=>`
+    <div class="chip ${activeTypeFilter===t.id?'active':''}" onclick="filterType('${t.id}')"><span class="dot" style="background:${t.color}"></span>${t.name}</div>`).join('');
+}
+function filterType(id){ activeTypeFilter = activeTypeFilter===id ? null : id; renderTypeChips(); renderMonthCalendar(); renderRoomGrid(); }
+function renderLegend(){
+  document.getElementById('typeLegend').innerHTML = uniqueTypes().map(t=>`
+    <div class="legend-item"><span class="legend-swatch" style="background:${t.color}"></span>${t.name}</div>`).join('');
+}
+function applyGuestControls(){
+  const open = propertySettings.booking_open;
+  document.getElementById('closedBanner').style.display = open ? 'none' : 'flex';
+  document.getElementById('widgetSearchBtn').disabled = !open;
+  document.querySelectorAll('.add-btn').forEach(b=> b.disabled = !open);
+}
+
+/* ================= MONTH CALENDAR ================= */
+function changeMonth(delta){ viewMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth()+delta, 1); renderMonthCalendar(); }
+function renderMonthCalendar(){
+  document.getElementById('monthLabel').textContent = `${THAI_MONTHS[viewMonth.getMonth()]} ${viewMonth.getFullYear()+543}`;
+  document.getElementById('calRange').textContent = `${THAI_MONTHS_SHORT[viewMonth.getMonth()]} ${viewMonth.getFullYear()+543}`;
+  applyGuestControls();
+  const grid = document.getElementById('monthGrid');
+  const firstDow = new Date(viewMonth.getFullYear(), viewMonth.getMonth(), 1).getDay();
+  const daysInMonth = new Date(viewMonth.getFullYear(), viewMonth.getMonth()+1, 0).getDate();
+  const list = activeTypeFilter ? rooms.filter(r=>r.type_id===activeTypeFilter) : rooms;
+  let html = THAI_DOW.map(d=>`<div class="dow">${d}</div>`).join('');
+  for(let i=0;i<firstDow;i++) html += `<div class="day-cell empty"></div>`;
+  for(let day=1; day<=daysInMonth; day++){
+    const date = new Date(viewMonth.getFullYear(), viewMonth.getMonth(), day);
+    const bookable = isDateBookable(date);
+    const isToday = sameDay(date, today);
+    let dots = '';
+    if(bookable.ok){
+      dots = list.map(r=>{
+        const c = availCountForDate(r, date);
+        return `<span class="d ${c===0?'off':''}" style="background:${typeColor(r.type_id)}"></span>`;
+      }).join('');
+    }
+    html += `<div class="day-cell ${bookable.ok?'':'closed'} ${isToday?'today':''}" ${bookable.ok?`onclick="openDayPanel('${ymd(date)}')"`:''} title="${bookable.ok?'':bookable.reason}">
+      <div class="dnum">${day}</div>
+      ${bookable.ok? `<div class="dots">${dots}</div>` : `<div class="lockmark">🔒</div>`}
+    </div>`;
+  }
+  grid.innerHTML = html;
+}
+function searchAvailability(){
+  const d = document.getElementById('checkinDate').valueAsDate || today;
+  viewMonth = new Date(d.getFullYear(), d.getMonth(), 1);
+  renderMonthCalendar();
+  document.getElementById('calendar-section').scrollIntoView({behavior:'smooth', block:'start'});
+  setTimeout(()=>openDayPanel(ymd(d)), 350);
+}
+
+/* ================= DAY PANEL ================= */
+function openDayPanel(dateStr){
+  const date = parseYmd(dateStr);
+  const bookable = isDateBookable(date);
+  const body = document.getElementById('dayPanelBody');
+  let rowsHtml;
+  if(!bookable.ok){
+    rowsHtml = `<div class="avail-msg bad">🚫 ${bookable.reason}</div>`;
+  } else if(rooms.length===0){
+    rowsHtml = `<div class="avail-msg bad">ยังไม่มีข้อมูลห้องพัก — เจ้าของที่พักยังไม่ได้เพิ่มห้องในระบบ</div>`;
+  } else {
+    rowsHtml = rooms.map(r=>{
+      const c = availCountForDate(r, date);
+      return `<div class="avail-row">
+        <div class="l"><span class="dot" style="background:${typeColor(r.type_id)}"></span>${r.name}<span class="cnt">ว่าง ${c}/${r.units} หลัง</span></div>
+        <div class="r"><span class="price">฿${r.price.toLocaleString()}/คืน</span>
+        <button ${c===0?'disabled':''} onclick="openBookingModal('${r.id}','${dateStr}')">เลือก</button></div>
+      </div>`;
+    }).join('');
+  }
+  body.innerHTML = `<h3>${fmtDateLong(date)}</h3><div class="sub">ห้องว่างในวันนี้</div>${rowsHtml}`;
+  document.getElementById('dayPanelOverlay').classList.add('open');
+}
+function closeDayPanel(){ document.getElementById('dayPanelOverlay').classList.remove('open'); }
+
+/* ================= BOOKING MODAL ================= */
+function openBookingModal(roomId, dateStr){
+  closeDayPanel();
+  const checkin = dateStr ? parseYmd(dateStr) : (document.getElementById('checkinDate').valueAsDate || today);
+  bookingModalCtx = { roomId, checkin, nights: nights || 1 };
+  renderBookingModal();
+  document.getElementById('bookingModalOverlay').classList.add('open');
+}
+function closeBookingModal(){ document.getElementById('bookingModalOverlay').classList.remove('open'); }
+function bmChangeNights(delta){ bookingModalCtx.nights = Math.max(1, Math.min(30, bookingModalCtx.nights+delta)); renderBookingModal(); }
+function bmChangeDate(val){ bookingModalCtx.checkin = parseYmd(val); renderBookingModal(); }
+function renderBookingModal(){
+  const room = rooms.find(r=>r.id===bookingModalCtx.roomId);
+  const { checkin, nights:n } = bookingModalCtx;
+  const checkout = new Date(checkin); checkout.setDate(checkout.getDate()+n);
+  const result = checkRangeAvailability(room, checkin, n);
+  const total = room.price * n;
+  const body = document.getElementById('bookingModalBody');
+  body.innerHTML = `
+    <div class="bm-head"><span class="dot" style="background:${typeColor(room.type_id)}"></span><h3 style="margin:0;">${room.name}</h3></div>
+    <div class="sub">${room.type_name} · รองรับ ${room.capacity} ท่าน</div>
+    <div class="bm-fields">
+      <div class="field"><label>เช็คอิน</label><input type="date" value="${ymd(checkin)}" onchange="bmChangeDate(this.value)"></div>
+      <div class="field"><label>จำนวนคืน</label>
+        <div class="stepper"><button onclick="bmChangeNights(-1)">–</button><div class="val">${n}</div><button onclick="bmChangeNights(1)">+</button></div>
+      </div>
+    </div>
+    <div class="avail-msg ${result.ok?'ok':'bad'}">
+      ${result.ok ? `✅ ว่าง (เหลือ ${result.minAvail} หลังตลอดช่วงที่เลือก) · เช็คเอาท์ ${fmtDate(checkout)}` : `⚠️ ${result.reason}`}
+    </div>
+    <div class="mrow"><span class="l">฿${room.price.toLocaleString()} × ${n} คืน</span><span class="r">฿${total.toLocaleString()}</span></div>
+    <div class="mtotal"><span>ยอดรวม</span><span>฿${total.toLocaleString()}</span></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" ${result.ok?'':'disabled'} onclick="confirmAddToCart()">เพิ่มรายการนี้ลงตะกร้า · ฿${total.toLocaleString()}</button>
+    </div>
+  `;
+}
+function confirmAddToCart(){
+  const room = rooms.find(r=>r.id===bookingModalCtx.roomId);
+  const { checkin, nights:n } = bookingModalCtx;
+  const checkout = new Date(checkin); checkout.setDate(checkout.getDate()+n);
+  cart.push({ cartId:'c'+Date.now()+Math.random().toString(16).slice(2), roomId:room.id, checkin:new Date(checkin), checkout, nights:n, price:room.price });
+  renderCart();
+  closeBookingModal();
+  showToast(`เพิ่ม "${room.name}" ลงตะกร้าแล้ว ✓`);
+}
+
+/* ================= ROOM CARDS ================= */
+function renderRoomGrid(){
+  const grid = document.getElementById('roomGrid');
+  const list = activeTypeFilter ? rooms.filter(r=>r.type_id===activeTypeFilter) : rooms;
+  document.getElementById('roomCount').textContent = `${uniqueTypes().length} ประเภท`;
+  if(rooms.length===0){
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">ยังไม่มีห้องพักในระบบ — เจ้าของที่พักยังไม่ได้เพิ่มข้อมูล</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(r=>`
+    <div class="room-card">
+      <div class="room-media"><img src="${r.img || 'https://placehold.co/600x450?text=No+Image'}" alt="${r.name}" loading="lazy"><div class="tag"><span class="dot" style="background:${typeColor(r.type_id)}"></span>${r.type_name}</div></div>
+      <div class="room-body">
+        <h3>${r.name}</h3>
+        <div class="room-meta"><span>👤 ${r.capacity} ท่าน</span><span class="mono">${r.units} หลัง</span></div>
+        <p class="room-desc">${r.description||''}</p>
+        <div class="room-foot">
+          <div class="room-price"><div class="num">฿${r.price.toLocaleString()}</div><div class="unit">ต่อคืน</div></div>
+          <button class="add-btn" ${propertySettings.booking_open?'':'disabled'} onclick="openBookingModal('${r.id}', null)">เลือกวันที่ว่าง</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+/* ================= GALLERY ================= */
+function renderGallery(){
+  document.getElementById('galleryGrid').innerHTML = galleryPhotos.filter(p=>p.src).map(p=>`
+    <div class="gallery-item" onclick="openLightbox('${p.src}','${(p.caption||'').replace(/'/g,"\\'")}')"><img src="${p.src}" alt="${p.caption||''}" loading="lazy"><div class="g-cap">${p.caption||''}</div></div>`).join('');
+}
+function openLightbox(src, cap){
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxImg').alt = cap;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(e){
+  if(e.target.id==='lightbox' || e.target.classList.contains('lightbox-close')) document.getElementById('lightbox').classList.remove('open');
+}
+
+/* ================= CART ================= */
+function removeFromCart(cartId){ cart = cart.filter(c=>c.cartId!==cartId); renderCart(); }
+function cartSubtotal(){ return cart.reduce((sum,c)=>sum+c.price*c.nights,0); }
+function cartTotal(){ const sub = cartSubtotal(); return coupon==='SUANHEAL10' ? Math.round(sub*0.9) : sub; }
+function renderCart(){
+  document.getElementById('cartBadge').style.display = cart.length ? 'flex' : 'none';
+  document.getElementById('cartBadge').textContent = cart.length;
+  const body = document.getElementById('drawerBody');
+  if(cart.length===0){
+    body.innerHTML = `<div class="cart-empty">ไม่พบรายการในตะกร้า<br>เลือกวันที่จากปฏิทินหรือการ์ดกระท่อมด้านล่าง</div>`;
+  } else {
+    body.innerHTML = cart.map(c=>{
+      const room = rooms.find(r=>r.id===c.roomId);
+      return `<div class="cart-item">
+        <div class="ci-swatch" style="background:${typeColor(room.type_id)}"></div>
+        <div class="ci-body"><h4>${room.name}</h4><div class="ci-meta">${fmtDate(c.checkin)} → ${fmtDate(c.checkout)} · ${c.nights} คืน</div>
+        <div class="ci-foot"><div class="ci-price">฿${(c.price*c.nights).toLocaleString()}</div><button class="ci-remove" onclick="removeFromCart('${c.cartId}')">ลบ</button></div></div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('totalVal').textContent = '฿'+cartTotal().toLocaleString();
+  document.getElementById('checkoutBtn').disabled = cart.length===0;
+}
+function applyCoupon(){
+  const val = document.getElementById('couponInput').value.trim().toUpperCase();
+  if(val==='SUANHEAL10'){ coupon=val; showToast('ใช้รหัสคูปองสำเร็จ ลด 10%'); }
+  else if(val===''){ showToast('กรุณากรอกรหัสคูปอง'); }
+  else { coupon=null; showToast('ไม่พบรหัสคูปองนี้'); }
+  renderCart();
+}
+function toggleDrawer(open){
+  document.getElementById('drawer').classList.toggle('open', open);
+  document.getElementById('overlay').classList.toggle('open', open);
+}
+
+/* ================= CHECKOUT ================= */
+function openCheckout(){
+  if(cart.length===0) return;
+  toggleDrawer(false);
+  checkoutStep = 1; pendingSlip = null; paymentChoice = 'full';
+  document.getElementById('checkoutOverlay').classList.add('open');
+  renderCheckoutStep();
+}
+function closeCheckout(){ document.getElementById('checkoutOverlay').classList.remove('open'); }
+function updateStepDots(){
+  for(let i=1;i<=3;i++){
+    const el = document.getElementById('stepDot'+i);
+    el.classList.remove('active','done');
+    if(i<checkoutStep) el.classList.add('done'); else if(i===checkoutStep) el.classList.add('active');
+  }
+}
+function setPaymentChoice(choice){ paymentChoice = choice; renderCheckoutStep(); }
+function renderCheckoutStep(){
+  updateStepDots();
+  const body = document.getElementById('modalBody');
+  if(checkoutStep===1){
+    body.innerHTML = `
+      <h3>สรุปรายการจอง</h3><div class="sub">ตรวจสอบวันที่และยอดรวมก่อนดำเนินการต่อ</div>
+      ${cart.map(c=>{ const room = rooms.find(r=>r.id===c.roomId);
+        return `<div class="mrow"><span class="l">${room.name} (${c.nights} คืน)</span><span class="r">฿${(c.price*c.nights).toLocaleString()}</span></div>`;
+      }).join('')}
+      <div class="mtotal"><span>ยอดรวม</span><span>฿${cartTotal().toLocaleString()}</span></div>
+      <div class="modal-actions"><button class="btn btn-primary" onclick="goStep(2)">ถัดไป: ข้อมูลผู้จอง</button></div>`;
+  } else if(checkoutStep===2){
+    body.innerHTML = `
+      <h3>ข้อมูลผู้จอง</h3><div class="sub">ใช้สำหรับติดต่อยืนยันการจองเท่านั้น</div>
+      <div class="form-group"><label>ชื่อ-นามสกุล</label><input type="text" id="gName" value="${guestInfo.name}" placeholder="เช่น สมชาย ใจดี"></div>
+      <div class="form-group"><label>เบอร์โทร</label><input type="tel" id="gPhone" value="${guestInfo.phone}" placeholder="08X-XXX-XXXX"></div>
+      <div class="form-group"><label>หมายเหตุ (ถ้ามี)</label><textarea id="gNote" placeholder="เช่น ขอเตียงเสริม, เวลาเช็คอินโดยประมาณ">${guestInfo.note}</textarea></div>
+      <div class="modal-actions"><button class="btn btn-ghost" onclick="goStep(1)">ย้อนกลับ</button><button class="btn btn-primary" onclick="saveGuestInfo()">ถัดไป: ชำระเงิน</button></div>`;
+  } else if(checkoutStep===3){
+    const full = cartTotal();
+    const dep = Math.round(full * propertySettings.deposit_percent/100);
+    const bal = full - dep;
+    const payNow = paymentChoice==='deposit' ? dep : full;
+    body.innerHTML = `
+      <h3>ชำระเงิน</h3><div class="sub">เลือกวิธีชำระ แล้วแนบสลิปเพื่อยืนยัน</div>
+      <div class="pay-choice">
+        <button class="${paymentChoice==='full'?'active':''}" onclick="setPaymentChoice('full')">ชำระเต็มจำนวน<span class="small">฿${full.toLocaleString()}</span></button>
+        <button class="${paymentChoice==='deposit'?'active':''}" onclick="setPaymentChoice('deposit')">วางมัดจำ ${propertySettings.deposit_percent}%<span class="small">฿${dep.toLocaleString()} วันนี้ · เหลือ ฿${bal.toLocaleString()} หน้างาน</span></button>
+      </div>
+      <div class="pay-box">
+        <div class="amt">฿${payNow.toLocaleString()}</div>
+        <div class="bank">โอนเข้าบัญชีที่เจ้าของที่พักแจ้งไว้<br>(แก้ข้อความนี้ได้จากฝั่งเจ้าของที่พัก)</div>
+      </div>
+      <div class="dropzone" id="dropzone">
+        <input type="file" accept="image/*" id="slipInput" onchange="handleSlipUpload(event)">
+        <div class="dz-text">📎 แตะเพื่อแนบสลิปการโอนเงิน (JPG/PNG)</div>
+      </div>
+      <div class="slip-preview" id="slipPreview"><img id="slipPreviewImg" src=""><div class="sp-name" id="slipPreviewName"></div><button class="sp-remove" onclick="removeSlip()">ลบ</button></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="goStep(2)">ย้อนกลับ</button>
+        <button class="btn btn-primary" id="submitBookingBtn" onclick="submitBooking()" disabled>ยืนยันการโอนเงิน</button>
+      </div>`;
+    if(pendingSlip){
+      document.getElementById('slipPreviewImg').src = pendingSlip.previewUrl;
+      document.getElementById('slipPreviewName').textContent = pendingSlip.file.name;
+      document.getElementById('slipPreview').classList.add('show');
+      document.getElementById('submitBookingBtn').disabled = false;
+    }
+  } else if(checkoutStep===4){
+    const b = bookings[0];
+    const depositNote = b.payment_type==='deposit' ? `<div class="sub">วางมัดจำ ฿${b.deposit_amount.toLocaleString()} แล้ว คงเหลือ ฿${b.balance_due.toLocaleString()} ชำระวันเข้าพัก</div>` : '';
+    body.innerHTML = `
+      <div class="success-wrap">
+        <div class="success-icon">✓</div>
+        <h3>ส่งคำขอจองสำเร็จ</h3>
+        <div class="sub">เราได้แจ้งเตือนเจ้าของที่พักให้ตรวจสอบสลิปแล้ว</div>
+        ${depositNote}
+        <div class="booking-code">${b.code}</div><br>
+        <span class="status-pill verify">🕒 รอตรวจสอบสลิป</span>
+        <div class="modal-actions" style="margin-top:22px;">
+          <button class="btn btn-ghost" onclick="closeCheckout()">ปิดหน้าต่าง</button>
+          <a class="btn btn-primary" style="text-align:center; text-decoration:none;" href="${propertySettings.line_url||'#'}" target="_blank" rel="noopener">แชท LINE สอบถาม</a>
+        </div>
+      </div>`;
+  }
+}
+function goStep(n){ checkoutStep = n; renderCheckoutStep(); }
+function saveGuestInfo(){
+  const name = document.getElementById('gName').value.trim();
+  const phone = document.getElementById('gPhone').value.trim();
+  if(!name || !phone){ showToast('กรุณากรอกชื่อและเบอร์โทร'); return; }
+  guestInfo = { name, phone, note: document.getElementById('gNote').value.trim() };
+  goStep(3);
+}
+function handleSlipUpload(e){
+  const file = e.target.files[0]; if(!file) return;
+  pendingSlip = { file, previewUrl: URL.createObjectURL(file) };
+  document.getElementById('slipPreviewImg').src = pendingSlip.previewUrl;
+  document.getElementById('slipPreviewName').textContent = file.name;
+  document.getElementById('slipPreview').classList.add('show');
+  document.getElementById('submitBookingBtn').disabled = false;
+}
+function removeSlip(){
+  pendingSlip = null;
+  document.getElementById('slipInput').value = '';
+  document.getElementById('slipPreview').classList.remove('show');
+  document.getElementById('submitBookingBtn').disabled = true;
+}
+async function uploadToStorage(bucket, file){
+  const path = `${Date.now()}-${Math.random().toString(16).slice(2)}-${file.name}`;
+  const { error } = await sb.storage.from(bucket).upload(path, file, { upsert:false });
+  if(error){ console.error(error); return null; }
+  const { data } = sb.storage.from(bucket).getPublicUrl(path);
+  return data.publicUrl;
+}
+async function submitBooking(){
+  if(!CONFIGURED){ showToast('ยังไม่ได้ตั้งค่า Supabase — แก้ URL/Key ในไฟล์นี้ก่อน'); return; }
+  const btn = document.getElementById('submitBookingBtn');
+  btn.disabled = true; btn.textContent = 'กำลังส่ง...';
+
+  let slipUrl = null;
+  if(pendingSlip) slipUrl = await uploadToStorage('slips', pendingSlip.file);
+
+  const code = 'NSK-' + Math.floor(1000 + Math.random()*9000);
+  const full = cartTotal();
+  const dep = Math.round(full * propertySettings.deposit_percent/100);
+  const bal = full - dep;
+  const item = cart[0]; // one room per booking row; loop if multiple in cart
+  const rows = cart.map(c => ({
+    code: cart.length>1 ? `${code}-${c.cartId.slice(-4)}` : code,
+    room_id: c.roomId, checkin: ymd(c.checkin), checkout: ymd(c.checkout), nights: c.nights,
+    price_per_night: c.price, total: c.price*c.nights,
+    payment_type: paymentChoice,
+    deposit_amount: paymentChoice==='deposit' ? Math.round(c.price*c.nights*propertySettings.deposit_percent/100) : c.price*c.nights,
+    balance_due: paymentChoice==='deposit' ? (c.price*c.nights - Math.round(c.price*c.nights*propertySettings.deposit_percent/100)) : 0,
+    guest_name: guestInfo.name, guest_phone: guestInfo.phone, guest_note: guestInfo.note,
+    slip_url: slipUrl, status:'awaiting_verification'
+  }));
+
+  const { error } = await sb.from('bookings').insert(rows);
+  if(error){ console.error(error); showToast('ส่งคำขอจองไม่สำเร็จ ลองใหม่อีกครั้ง'); btn.disabled=false; btn.textContent='ยืนยันการโอนเงิน'; return; }
+
+  await addNotification('host', 'มีคำขอจองใหม่ 🔔', `${guestInfo.name} ส่งสลิปรอตรวจสอบ · รหัส ${code} · ฿${(paymentChoice==='deposit'?dep:full).toLocaleString()}${paymentChoice==='deposit'?' (มัดจำ)':''}`);
+  await addNotification('guest', 'ส่งคำขอจองสำเร็จ', `รหัสการจอง ${code} กำลังรอเจ้าของที่พักตรวจสอบสลิป`);
+
+  await refreshBookings();
+  cart = []; coupon = null;
+  renderCart();
+  goStep(4);
+  if(currentRole==='host') renderHostDashboard();
+}
+
+/* ================= NOTIFICATIONS ================= */
+async function loadNotifications(){
+  if(!CONFIGURED) return;
+  const { data } = await sb.from('notifications').select('*').order('created_at',{ascending:false}).limit(50);
+  notifications = data || [];
+}
+async function addNotification(role, title, message){
+  if(!CONFIGURED) return;
+  await sb.from('notifications').insert({ role, title, message, read:false });
+  await loadNotifications();
+  renderNotifBadge();
+  if(currentRole===role) renderNotifList();
+}
+function renderNotifBadge(){
+  const count = notifications.filter(n=>n.role===currentRole && !n.read).length;
+  const badge = document.getElementById('notifBadge');
+  badge.style.display = count ? 'flex' : 'none';
+  badge.textContent = count;
+}
+function renderNotifList(){
+  const list = notifications.filter(n=>n.role===currentRole);
+  const el = document.getElementById('notifList');
+  if(list.length===0){ el.innerHTML = `<div class="notif-empty">ยังไม่มีการแจ้งเตือน</div>`; return; }
+  el.innerHTML = list.map(n=>`<div class="notif-item ${n.read?'read':''}"><div class="dot"></div><div><h5>${n.title}</h5><p>${n.message}</p><div class="t">${new Date(n.created_at).toLocaleString('th-TH',{hour:'2-digit',minute:'2-digit'})}</div></div></div>`).join('');
+}
+async function toggleNotifDropdown(){
+  const dd = document.getElementById('notifDropdown');
+  dd.classList.toggle('open');
+  if(dd.classList.contains('open')){
+    const unread = notifications.filter(n=>n.role===currentRole && !n.read);
+    if(unread.length && CONFIGURED){
+      await sb.from('notifications').update({read:true}).in('id', unread.map(n=>n.id));
+      await loadNotifications();
+    }
+    renderNotifList();
+    setTimeout(renderNotifBadge, 300);
+  }
+}
+document.addEventListener('click', function(e){
+  const dd = document.getElementById('notifDropdown'); const btn = document.getElementById('notifBtn');
+  if(dd.classList.contains('open') && !dd.contains(e.target) && !btn.contains(e.target)) dd.classList.remove('open');
+});
+
+/* ================= HOST DASHBOARD ================= */
+async function toggleBookingOpen(){
+  propertySettings.booking_open = !propertySettings.booking_open;
+  document.getElementById('toggleOpen').classList.toggle('on', propertySettings.booking_open);
+  await saveSettingsField({ booking_open: propertySettings.booking_open });
+  showToast(propertySettings.booking_open ? 'เปิดรับจองล่วงหน้าแล้ว' : 'ปิดรับจองล่วงหน้าชั่วคราวแล้ว');
+  renderMonthCalendar(); renderRoomGrid();
+}
+async function updateSetting(key, val){
+  propertySettings[key] = Math.max(0, parseInt(val)||0);
+  await saveSettingsField({ [key]: propertySettings[key] });
+  showToast('บันทึกการตั้งค่าแล้ว');
+  renderMonthCalendar();
+}
+async function saveSettingsField(patch){
+  if(!CONFIGURED) return;
+  await sb.from('property_settings').update(patch).eq('id',1);
+}
+async function addBlackout(){
+  const val = document.getElementById('blackoutInput').value;
+  if(!val){ showToast('กรุณาเลือกวันที่'); return; }
+  if(!blackoutDates.includes(val)){
+    blackoutDates.push(val);
+    if(CONFIGURED) await sb.from('blackout_dates').insert({date:val});
+  }
+  document.getElementById('blackoutInput').value = '';
+  renderBlackoutList(); renderMonthCalendar();
+  showToast('เพิ่มวันปิดรับจองแล้ว');
+}
+async function removeBlackout(val){
+  blackoutDates = blackoutDates.filter(d=>d!==val);
+  if(CONFIGURED) await sb.from('blackout_dates').delete().eq('date', val);
+  renderBlackoutList(); renderMonthCalendar();
+}
+function renderBlackoutList(){
+  const el = document.getElementById('blackoutList');
+  if(blackoutDates.length===0){ el.innerHTML = `<span style="font-size:12px; color:var(--ink-soft);">ยังไม่มีวันปิดรับจองพิเศษ</span>`; return; }
+  el.innerHTML = blackoutDates.map(v=>`<div class="blackout-chip">${fmtDate(parseYmd(v))}<button onclick="removeBlackout('${v}')">×</button></div>`).join('');
+}
+function renderHostDashboard(){
+  const pending = bookings.filter(b=>b.status==='awaiting_verification');
+  const confirmed = bookings.filter(b=>b.status==='confirmed');
+  document.getElementById('statPending').textContent = pending.length;
+  document.getElementById('statConfirmed').textContent = confirmed.length;
+  document.getElementById('statRevenue').textContent = '฿'+confirmed.reduce((s,b)=>s+(b.payment_type==='deposit'?b.deposit_amount:b.total),0).toLocaleString();
+  document.getElementById('statTotal').textContent = bookings.length;
+  renderBlackoutList();
+
+  const list = document.getElementById('bookingList');
+  if(bookings.length===0){
+    list.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h18M3 12h18M3 17h18"/></svg>ยังไม่มีการจองเข้ามา — ลองสลับไปมุมมอง "ผู้จอง" แล้วทดลองจองดูได้เลย</div>`;
+    return;
+  }
+  list.innerHTML = bookings.map(b=>{
+    const room = rooms.find(r=>r.id===b.room_id);
+    const dateRange = `${fmtDate(b.checkin)} → ${fmtDate(b.checkout)}`;
+    const pillMap = { awaiting_verification:['verify','🕒 รอตรวจสอบสลิป'], confirmed:['confirmed','✅ ยืนยันแล้ว'], rejected:['rejected','✕ ปฏิเสธ'] };
+    const [pillClass, pillText] = pillMap[b.status];
+    const priceHtml = b.payment_type==='deposit'
+      ? `฿${b.deposit_amount.toLocaleString()}<span class="sub">มัดจำ · เหลือ ฿${b.balance_due.toLocaleString()}</span>`
+      : `฿${b.total.toLocaleString()}<span class="sub">ชำระเต็มจำนวน</span>`;
+    return `<div class="booking-row">
+      ${b.slip_url ? `<img class="slip-thumb" src="${b.slip_url}" onclick="openLightbox('${b.slip_url}','สลิปการโอนเงิน')">` : `<div class="slip-thumb"></div>`}
+      <div class="info"><div class="code">${b.code}</div><h4>${b.guest_name} · ${b.guest_phone}</h4><div class="meta">${room?room.name:'(ห้องถูกลบ)'} · ${dateRange}</div></div>
+      <div class="price">${priceHtml}</div>
+      <span class="status-pill ${pillClass}">${pillText}</span>
+      <div class="actions">
+        ${b.status==='awaiting_verification' ? `<button class="btn-approve" onclick="verifyBooking(${b.id}, true)">ยืนยันการชำระ</button><button class="btn-reject" onclick="verifyBooking(${b.id}, false)">ปฏิเสธ</button>` : ``}
+        ${b.status==='confirmed' ? `<button class="btn-remind" onclick="sendReminder('${b.code}')">ส่งแจ้งเตือนก่อนเข้าพัก</button>` : ``}
+      </div>
+    </div>`;
+  }).join('');
+}
+async function verifyBooking(id, approve){
+  const b = bookings.find(x=>x.id===id); if(!b) return;
+  const status = approve ? 'confirmed' : 'rejected';
+  if(CONFIGURED) await sb.from('bookings').update({status}).eq('id', id);
+  b.status = status;
+  if(approve){
+    const msg = b.payment_type==='deposit'
+      ? `รหัส ${b.code} ยืนยันมัดจำแล้ว เหลือ ฿${b.balance_due.toLocaleString()} ชำระวันเข้าพัก`
+      : `รหัส ${b.code} ได้รับการยืนยันแล้ว พบกันที่ ${propertySettings.name}!`;
+    await addNotification('guest', 'การจองยืนยันสำเร็จ ✅', msg);
+    showToast(`ยืนยันการจอง ${b.code} แล้ว — แจ้งเตือนผู้จองเรียบร้อย`);
+  } else {
+    await addNotification('guest', 'การจองถูกปฏิเสธ', `รหัส ${b.code} — สลิปไม่ถูกต้อง กรุณาติดต่อทางร้าน`);
+    showToast(`ปฏิเสธการจอง ${b.code} แล้ว — แจ้งเตือนผู้จองเรียบร้อย`);
+  }
+  renderHostDashboard();
+  renderMonthCalendar();
+}
+async function sendReminder(code){
+  await addNotification('guest', 'ใกล้ถึงวันเข้าพักแล้ว 🌲', `รหัส ${code} — อย่าลืมเตรียมตัวมาเช็คอิน ทักแชทได้หากต้องการสอบถามเส้นทาง`);
+  showToast(`ส่งแจ้งเตือนก่อนเข้าพักสำหรับ ${code} แล้ว`);
+}
+
+/* ================= PHOTO MANAGER (host) ================= */
+function renderPhotoManager(){
+  const heroGrid = document.getElementById('photoHeroGrid');
+  if(!heroGrid) return;
+
+  heroGrid.innerHTML = `
+    <div class="photo-card wide">
+      <div class="pv ${propertySettings.hero_img?'':'no-img'}">
+        ${propertySettings.hero_img ? `<img src="${propertySettings.hero_img}" alt="ภาพหน้าปก">` : `<div class="empty-pv">ยังไม่มีรูป</div>`}
+        <label class="upload-overlay">📤 อัปโหลดรูปใหม่<input type="file" accept="image/*" onchange="handlePhotoUpload(event,'hero')"></label>
+      </div>
+      <div class="meta"><div class="t">ภาพหน้าปกหน้าแรก</div><div class="st">แสดงในแบนเนอร์ hero ฝั่งผู้จอง</div></div>
+    </div>`;
+
+  document.getElementById('photoQrGrid').innerHTML = `
+    <div class="photo-card wide">
+      <div class="pv ${propertySettings.line_qr_img?'':'no-img'}">
+        ${propertySettings.line_qr_img ? `<img src="${propertySettings.line_qr_img}" alt="QR Code เพิ่มเพื่อน LINE">` : `<div class="empty-pv">ยังไม่มีรูป QR<br>แตะเพื่ออัปโหลด</div>`}
+        <label class="upload-overlay">📤 อัปโหลดรูปใหม่<input type="file" accept="image/*" onchange="handlePhotoUpload(event,'lineqr')"></label>
+      </div>
+      <div class="meta"><div class="t">QR Code Scan to Add Friend</div><div class="st">โชว์ให้ผู้จองสแกนเพิ่มเพื่อน LINE ได้จากท้ายหน้าเว็บ</div></div>
+    </div>`;
+
+  document.getElementById('photoRoomGrid').innerHTML = rooms.map(r=>`
+    <div class="photo-card">
+      <div class="pv"><img src="${r.img||'https://placehold.co/600x450?text=No+Image'}" alt="${r.name}">
+        <label class="upload-overlay">📤 อัปโหลดรูปใหม่<input type="file" accept="image/*" onchange="handlePhotoUpload(event,'room','${r.id}')"></label>
+      </div>
+      <div class="meta">
+        <div class="t">${r.name}</div><div class="st">${r.type_name}</div>
+        <label style="display:block; margin-top:9px; font-size:11px; font-weight:700; color:var(--ink-soft);">ราคาต่อคืน (บาท)</label>
+        <input type="number" value="${r.price}" min="0" step="10" onchange="updateRoomPrice('${r.id}', this.value)">
+      </div>
+    </div>`).join('');
+
+  document.getElementById('photoGalleryGrid').innerHTML = galleryPhotos.map(p=>`
+    <div class="photo-card">
+      <div class="pv ${p.src?'':'no-img'}">
+        ${p.src ? `<img src="${p.src}" alt="${p.caption||''}">` : `<div class="empty-pv">ยังไม่มีรูป<br>แตะเพื่ออัปโหลด</div>`}
+        <label class="upload-overlay">📤 อัปโหลดรูปใหม่<input type="file" accept="image/*" onchange="handlePhotoUpload(event,'gallery',${p.id})"></label>
+      </div>
+      <div class="meta">
+        <input type="text" value="${p.caption||''}" placeholder="คำบรรยายภาพ" onchange="updateGalleryCaption(${p.id}, this.value)">
+        <button class="ci-remove" style="margin-top:8px;" onclick="removeGalleryPhoto(${p.id})">ลบรูปนี้</button>
+      </div>
+    </div>`).join('');
+}
+async function handlePhotoUpload(e, kind, ref){
+  const file = e.target.files[0]; if(!file) return;
+  if(!CONFIGURED){ showToast('ยังไม่ได้ตั้งค่า Supabase — แก้ URL/Key ในไฟล์นี้ก่อน'); return; }
+  showToast('กำลังอัปโหลด...');
+  const url = await uploadToStorage('photos', file);
+  if(!url){ showToast('อัปโหลดไม่สำเร็จ'); return; }
+
+  if(kind==='hero'){
+    propertySettings.hero_img = url;
+    await saveSettingsField({ hero_img:url });
+    const heroEl = document.getElementById('heroImg'); if(heroEl) heroEl.src = url;
+  } else if(kind==='lineqr'){
+    propertySettings.line_qr_img = url;
+    await saveSettingsField({ line_qr_img:url });
+    applyLineQr();
+  } else if(kind==='room'){
+    const room = rooms.find(r=>r.id===ref);
+    room.img = url;
+    await sb.from('rooms').update({img:url}).eq('id', ref);
+    renderRoomGrid();
+  } else if(kind==='gallery'){
+    const p = galleryPhotos.find(g=>g.id===ref);
+    p.src = url;
+    await sb.from('gallery_photos').update({src:url}).eq('id', ref);
+    renderGallery();
+  }
+  renderPhotoManager();
+  showToast('อัปโหลดรูปสำเร็จ');
+}
+async function updateGalleryCaption(id, val){
+  const p = galleryPhotos.find(g=>g.id===id);
+  if(p) p.caption = val || 'ไม่มีคำบรรยาย';
+  if(CONFIGURED) await sb.from('gallery_photos').update({caption: p.caption}).eq('id', id);
+  renderGallery();
+}
+async function addGalleryPhoto(){
+  if(!CONFIGURED){ showToast('ยังไม่ได้ตั้งค่า Supabase'); return; }
+  const { data, error } = await sb.from('gallery_photos').insert({ src:'', caption:'รูปใหม่', sort_order: galleryPhotos.length }).select().single();
+  if(error){ console.error(error); return; }
+  galleryPhotos.push(data);
+  renderPhotoManager();
+}
+async function removeGalleryPhoto(id){
+  galleryPhotos = galleryPhotos.filter(p=>p.id!==id);
+  if(CONFIGURED) await sb.from('gallery_photos').delete().eq('id', id);
+  renderPhotoManager();
+  renderGallery();
+}
+async function updateRoomPrice(id, val){
+  const price = Math.max(0, parseInt(val)||0);
+  const room = rooms.find(r=>r.id===id);
+  room.price = price;
+  if(CONFIGURED) await sb.from('rooms').update({price}).eq('id', id);
+  renderRoomGrid();
+  showToast(`อัปเดตราคา "${room.name}" เป็น ฿${price.toLocaleString()} แล้ว`);
+}
+
+/* ================= PROPERTY INFO (host) ================= */
+function renderPropertyForm(){
+  const el = document.getElementById('propertyInfoForm');
+  if(!el) return;
+  el.innerHTML = `
+    <div class="form-group"><label>ชื่อที่พัก</label><input type="text" value="${propertySettings.name}" onchange="updatePropertyInfo('name', this.value)"></div>
+    <div class="form-group"><label>เบอร์โทรติดต่อ</label><input type="tel" value="${propertySettings.phone}" placeholder="08X-XXX-XXXX" onchange="updatePropertyInfo('phone', this.value)"></div>
+    <div class="form-group"><label>ลิงก์ Facebook เพจ</label><input type="url" value="${propertySettings.facebook_url}" placeholder="https://facebook.com/yourpage" onchange="updatePropertyInfo('facebook_url', this.value)"></div>
+    <div class="form-group"><label>ลิงก์ Instagram</label><input type="url" value="${propertySettings.instagram_url}" placeholder="https://instagram.com/yourpage" onchange="updatePropertyInfo('instagram_url', this.value)"></div>
+    <div class="form-group" style="margin-bottom:0;"><label>ลิงก์ LINE Official</label><input type="url" value="${propertySettings.line_url}" placeholder="https://lin.ee/xxxxx" onchange="updatePropertyInfo('line_url', this.value)"></div>
+  `;
+}
+async function updatePropertyInfo(key, value){
+  propertySettings[key] = value.trim();
+  await saveSettingsField({ [key]: propertySettings[key] });
+  applyPropertyInfo();
+  showToast('บันทึกข้อมูลที่พักแล้ว');
+}
+function applyPropertyInfo(){
+  const mark = document.getElementById('brandMark'); if(mark) mark.textContent = propertySettings.name ? propertySettings.name.charAt(0) : 'ท';
+  const bn = document.getElementById('brandName'); if(bn) bn.textContent = propertySettings.name || 'ที่พักของฉัน';
+  const bs = document.getElementById('brandSub'); if(bs) bs.textContent = propertySettings.sub || '';
+  const fc = document.getElementById('footerCopy'); if(fc) fc.textContent = `© ${new Date().getFullYear()} ${propertySettings.name || 'ที่พักของฉัน'}`;
+  const fp = document.getElementById('footerPhoneLink');
+  if(fp && propertySettings.phone){ fp.textContent = `📞 ${propertySettings.phone}`; fp.href = 'tel:' + propertySettings.phone.replace(/[^0-9+]/g,''); }
+  const fl = document.getElementById('footerLineLink'); const lb = document.getElementById('lineBtn');
+  if(propertySettings.line_url){ if(fl) fl.href = propertySettings.line_url; if(lb) lb.href = propertySettings.line_url; }
+  const ffb = document.getElementById('footerFbLink');
+  if(ffb){ if(propertySettings.facebook_url){ ffb.href = propertySettings.facebook_url; ffb.style.display=''; } else ffb.style.display='none'; }
+  const fig = document.getElementById('footerIgLink');
+  if(fig){ if(propertySettings.instagram_url){ fig.href = propertySettings.instagram_url; fig.style.display=''; } else fig.style.display='none'; }
+}
+function applyLineQr(){
+  const el = document.getElementById('footerQrLink');
+  if(el) el.style.display = propertySettings.line_qr_img ? '' : 'none';
+}
+
+/* ================= HERO CONTENT (host) ================= */
+function renderHeroContentForm(){
+  const el = document.getElementById('heroContentForm');
+  if(!el) return;
+  el.innerHTML = `
+    <div class="form-group"><label>หัวข้อหลัก</label><textarea rows="2" onchange="updateHeroField('hero_headline', this.value)">${propertySettings.hero_headline}</textarea></div>
+    <div class="form-group" style="margin-bottom:0;"><label>คำโปรยใต้หัวข้อ</label><textarea rows="3" onchange="updateHeroField('hero_lede', this.value)">${propertySettings.hero_lede}</textarea></div>
+  `;
+}
+async function updateHeroField(key, value){
+  propertySettings[key] = value;
+  await saveSettingsField({ [key]: value });
+  applyHeroContent();
+  showToast('บันทึกข้อความหน้าแรกแล้ว');
+}
+function applyHeroContent(){
+  const h = document.getElementById('heroHeadline');
+  if(h) h.innerHTML = (propertySettings.hero_headline||'').split('\n').join('<br>');
+  const p = document.getElementById('heroLede');
+  if(p) p.textContent = propertySettings.hero_lede || '';
+}
+
+/* ================= POLICY ================= */
+function renderPolicyEditor(){
+  const el = document.getElementById('policyTextarea');
+  if(el) el.value = propertySettings.policy_text || '';
+}
+async function updatePolicyText(value){
+  propertySettings.policy_text = value;
+  await saveSettingsField({ policy_text: value });
+  showToast('บันทึกนโยบายที่พักแล้ว');
+}
+function openPolicyModal(){
+  document.getElementById('policyModalContent').textContent = propertySettings.policy_text || 'เจ้าของที่พักยังไม่ได้ระบุนโยบายที่พัก กรุณาสอบถามผ่าน LINE';
+  document.getElementById('policyModalOverlay').classList.add('open');
+}
+function closePolicyModal(){ document.getElementById('policyModalOverlay').classList.remove('open'); }
+
+/* ================= TOAST ================= */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+/* ================= BOOT ================= */
+(async function boot(){
+  await loadAll();
+  await loadNotifications();
+  applyPropertyInfo();
+  applyHeroContent();
+  applyLineQr();
+  renderTypeChips();
+  renderLegend();
+  renderMonthCalendar();
+  renderRoomGrid();
+  renderGallery();
+  renderCart();
+  renderNotifBadge();
+  renderNotifList();
+})();
+
+</script>
+</body>
+</html>
